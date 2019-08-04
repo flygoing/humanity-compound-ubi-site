@@ -1,0 +1,77 @@
+body, html {
+  height: 100%
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100%
+}
+
+#humanity-title {
+  font-family: sans-serif;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: rgb(64, 64, 64);
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 3px;
+  margin-top: 2px;
+  z-index: 25;
+  text-decoration: none;
+}
+
+#learn-apply {
+  cursor: pointer;
+  color: rgb(101, 101, 230);
+  font-weight: bold;
+}
+
+button {
+  cursor: pointer;
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 14px;
+  letter-spacing: 0.8px;
+  height: 40px;
+  color: white;
+  background-color: rgb(101, 101, 230);
+  border-width: 0px;
+  border-style: initial;
+  border-color: initial;
+  border-image: initial;
+  margin: 0px;
+  padding: 5px 20px;
+  border-radius: 2px;
+
+}
+button:hover{
+  background-color: rgb(112,112,230)
+}
+
+button:disabled{
+  background-color: rgb(100,100,130)
+}
+
+.col-6 {
+  overflow: hidden;
+}
+
+.set-max {
+  cursor: pointer;
+  color: rgb(20, 20, 20);
+}
+.set-max:hover {
+  color: rgb(64, 64, 64);
+
+}
