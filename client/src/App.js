@@ -15,13 +15,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 class App extends Component {
-  state = { allowance: BigNumber(0), usersPoolBalance: BigNumber(0), usersDaiBalance: BigNumber(0), inputValue: BigNumber(0), claimableUbiBalance: 0, web3: null, accounts: null, ubi: null };
+  state = { allowance: BigNumber(0), usersPoolBalance: BigNumber(0), usersDaiBalance: BigNumber(0), inputValue: BigNumber(0), claimableUbiBalance: 0, web3: null, ubi: null };
 
   componentDidMount = async () => {
     try {
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
-      console.log(web3.transactionConfirmationBlocks, web3.transactionPollingTimeout,web3.version)
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
       const ubi = new web3.eth.Contract(
@@ -74,20 +73,20 @@ class App extends Component {
     const { web3, ubi, pool, registry, dai, cDai} = this.state;
     // Use web3 to get the user's accounts.
     const accounts = await web3.eth.getAccounts();
-
+    const account = accounts.length>0?accounts[0]: undefined
     // Get the value from the contract to prove it worked.
-    const claimableUbiBalance = (Number.parseFloat((await ubi.methods.claimableBalance(accounts[0]).call()).toString()) / 10 ** 18).toFixed(6)
+    const claimableUbiBalance = account?(Number.parseFloat((await ubi.methods.claimableBalance(account).call()).toString()) / 10 ** 18).toFixed(6):"0.000000"
 
-    const usersPoolBalance = BigNumber((await pool.methods.balanceOf(accounts[0]).call()).toString())
+    const usersPoolBalance = account?BigNumber((await pool.methods.balanceOf(account).call()).toString()):BigNumber(0)
 
-    const usersDaiBalance = BigNumber((await dai.methods.balanceOf(accounts[0]).call()).toString())
+    const usersDaiBalance = account?BigNumber((await dai.methods.balanceOf(account).call()).toString()):BigNumber(0)
 
     const totalPoolBalance = (BigNumber((await cDai.methods.balanceOfUnderlying(pool.options.address).call()).toString()) / 10 ** 18).toFixed(6)
     const excessPoolBalance = (BigNumber((await pool.methods.excessDepositTokens().call()).toString()) / 10 ** 18).toFixed(6)
     const poolDepositBalance = (BigNumber((await pool.methods.totalSupply().call()).toString()) / 10 ** 18).toFixed(6)
-    const isHuman = await registry.methods.isHuman(accounts[0]).call()
+    const isHuman = account?await registry.methods.isHuman(account).call():false
 
-    const allowance = BigNumber((await dai.methods.allowance(accounts[0], pool.options.address).call()).toString())
+    const allowance = account?BigNumber((await dai.methods.allowance(account, pool.options.address).call()).toString()):BigNumber(0)
     // Update state with the result.
     this.setState({ allowance, claimableUbiBalance, usersPoolBalance, usersDaiBalance, totalPoolBalance, excessPoolBalance, poolDepositBalance, isHuman});
   };
@@ -118,8 +117,7 @@ class App extends Component {
     try{
       console.log("Starting transaction promises")
       await ubi.methods.claim().send({from: account, gasPrice: await this.getGasPrice()})
-    } catch (e){console.log("CLAIM ERROR"); console.log(e)}
-    console.log("FINISHED CLAIM TRANSACTIONS")
+    } catch{}
     await this.setState({isClaiming: false})
     await this.updateBalances()
   }
@@ -130,10 +128,8 @@ class App extends Component {
     // await this.updateBalances()
     const account = (await web3.eth.getAccounts())[0]
     try {
-      console.log("Starting transaction promises")
       await pool.methods.withdraw(inputValue.toString()).send({from: account, gasPrice: await this.getGasPrice()})
-    } catch (e){console.log("WITHDRAW ERROR"); console.log(e)}
-    console.log("FINISHED WITHDRAW TRANSACTIONS")
+    } catch{}
     await this.updateBalances()
     await this.setState({isWithdrawing: false})
   }
@@ -149,10 +145,8 @@ class App extends Component {
         promises.push(dai.methods.approve(pool.options.address, BigNumber("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").toFixed()).send({from: account, gasPrice: await this.getGasPrice()}))
       }
       promises.push(pool.methods.deposit(inputValue.toString()).send({from: account, gasPrice: await this.getGasPrice()}))
-      console.log("Starting transaction promises")
       await Promise.all(promises)
-    } catch (e){console.log("DEPOSIT ERROR"); console.log(e)}
-    console.log("FINISHED DEPOSIT TRANSACTIONS")
+    } catch{}
     await this.updateBalances()
     await this.setState({isDepositing: false})
   }
@@ -168,17 +162,15 @@ class App extends Component {
         promises.push(dai.methods.approve(pool.options.address, BigNumber("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").toFixed()).send({from: account, gasPrice: await this.getGasPrice()}))
       }
       promises.push(pool.methods.donate(inputValue.toString()).send({from: account, gasPrice: await this.getGasPrice()}))
-      console.log("Starting transaction promises")
       await Promise.all(promises)
-    } catch (e){console.log("DONATE ERROR"); console.log(e)}
-    console.log("FINISHED WITHDRAW TRANSACTIONS")
+    } catch{}
     await this.updateBalances()
     await this.setState({isDonating: false})
   }
 
   render() {
     if (!this.state.web3) {
-      return <div>Loading Web3, accounts, and contract...</div>
+      return <div></div>
     }
     return (
       <div className='App h-100'>
@@ -253,12 +245,12 @@ class App extends Component {
                         <div className='col-6 set-max' onClick={this.updateValueToWalletBalance}>
                           Wallet balance<br/>
                           <img src={daiIcon} alt='' style={{ width: '20px', height: '20px'}}/>
-{(parseInt(this.state.usersDaiBalance) / 10 ** 18).toFixed(6)}
+                          {(parseInt(this.state.usersDaiBalance) / 10 ** 18).toFixed(6)}
                         </div>
                         <div className='col-6 set-max' onClick={this.updateValueToPoolBalance}>
                           Pool balance<br/>
                           <img src={daiIcon} alt='' style={{ width: '20px', height: '20px'}}/>
-{(parseInt(this.state.usersPoolBalance) / 10 ** 18).toFixed(6)}
+                          {(parseInt(this.state.usersPoolBalance) / 10 ** 18).toFixed(6)}
                         </div>
                       </div>
                       <div className='row'>
