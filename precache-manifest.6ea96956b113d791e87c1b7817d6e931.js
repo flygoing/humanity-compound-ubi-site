@@ -28,7 +28,7 @@ self.__precacheManifest = [
     "url": "/humanity-compound-ubi-site/static/css/1.b9e38518.chunk.css"
   },
   {
-    "revision": "3a0ec6c9a3232ed0c2afc2284405ac1a",
+    "revision": "34064e60b38f3ab808790047792d3970",
     "url": "/humanity-compound-ubi-site/index.html"
   }
 ];
