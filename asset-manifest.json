@@ -1,7 +1,7 @@
 {
   "main.css": "/humanity-compound-ubi-site/static/css/main.3fe1fd86.chunk.css",
-  "main.js": "/humanity-compound-ubi-site/static/js/main.0fa42752.chunk.js",
-  "main.js.map": "/humanity-compound-ubi-site/static/js/main.0fa42752.chunk.js.map",
+  "main.js": "/humanity-compound-ubi-site/static/js/main.101f9a70.chunk.js",
+  "main.js.map": "/humanity-compound-ubi-site/static/js/main.101f9a70.chunk.js.map",
   "static/css/1.b9e38518.chunk.css": "/humanity-compound-ubi-site/static/css/1.b9e38518.chunk.css",
   "static/js/1.7289c2c9.chunk.js": "/humanity-compound-ubi-site/static/js/1.7289c2c9.chunk.js",
   "static/js/1.7289c2c9.chunk.js.map": "/humanity-compound-ubi-site/static/js/1.7289c2c9.chunk.js.map",
@@ -12,6 +12,6 @@
   "static/media/humanityIcon.svg": "/humanity-compound-ubi-site/static/media/humanityIcon.d37c0cc9.svg",
   "static/css/1.b9e38518.chunk.css.map": "/humanity-compound-ubi-site/static/css/1.b9e38518.chunk.css.map",
   "index.html": "/humanity-compound-ubi-site/index.html",
-  "precache-manifest.e6b41a065ea05ddfe5303e2c21c1f65a.js": "/humanity-compound-ubi-site/precache-manifest.e6b41a065ea05ddfe5303e2c21c1f65a.js",
+  "precache-manifest.f9f2d78ae91d2e6d22b0564412e84878.js": "/humanity-compound-ubi-site/precache-manifest.f9f2d78ae91d2e6d22b0564412e84878.js",
   "service-worker.js": "/humanity-compound-ubi-site/service-worker.js"
 }
