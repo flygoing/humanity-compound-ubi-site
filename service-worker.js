@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/humanity-compound-ubi-site/precache-manifest.6ea96956b113d791e87c1b7817d6e931.js"
+  "/humanity-compound-ubi-site/precache-manifest.e6b41a065ea05ddfe5303e2c21c1f65a.js"
 );
 
 workbox.clientsClaim();

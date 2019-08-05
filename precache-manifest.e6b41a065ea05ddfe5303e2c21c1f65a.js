@@ -12,23 +12,23 @@ self.__precacheManifest = [
     "url": "/humanity-compound-ubi-site/static/js/runtime~main.a4e875b5.js"
   },
   {
-    "revision": "1618d1ad54bc0d53aed1",
-    "url": "/humanity-compound-ubi-site/static/js/main.1618d1ad.chunk.js"
+    "revision": "0fa42752e4bd389e7510",
+    "url": "/humanity-compound-ubi-site/static/js/main.0fa42752.chunk.js"
   },
   {
-    "revision": "e286928f9ae2ab8e54cb",
-    "url": "/humanity-compound-ubi-site/static/js/1.e286928f.chunk.js"
+    "revision": "7289c2c95537505482d4",
+    "url": "/humanity-compound-ubi-site/static/js/1.7289c2c9.chunk.js"
   },
   {
-    "revision": "1618d1ad54bc0d53aed1",
+    "revision": "0fa42752e4bd389e7510",
     "url": "/humanity-compound-ubi-site/static/css/main.3fe1fd86.chunk.css"
   },
   {
-    "revision": "e286928f9ae2ab8e54cb",
+    "revision": "7289c2c95537505482d4",
     "url": "/humanity-compound-ubi-site/static/css/1.b9e38518.chunk.css"
   },
   {
-    "revision": "34064e60b38f3ab808790047792d3970",
+    "revision": "a5f52c0508d9f772cb06c8de1dc712d7",
     "url": "/humanity-compound-ubi-site/index.html"
   }
 ];
