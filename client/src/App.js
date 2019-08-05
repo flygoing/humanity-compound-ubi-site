@@ -71,22 +71,25 @@ class App extends Component {
 
   updateBalances = async () => {
     const { web3, ubi, pool, registry, dai, cDai} = this.state;
-    // Use web3 to get the user's accounts.
+
+    // Use web3 to get the user's account.
     const accounts = await web3.eth.getAccounts();
     const account = accounts.length>0?accounts[0]: undefined
     // Get the value from the contract to prove it worked.
-    const claimableUbiBalance = account?(Number.parseFloat((await ubi.methods.claimableBalance(account).call()).toString()) / 10 ** 18).toFixed(6):"0.000000"
+    let claimableUbiBalance = account?(Number.parseFloat((await ubi.methods.claimableBalance(account).call()).toString()) / 10 ** 18).toFixed(6):"0.000000"
 
-    const usersPoolBalance = account?BigNumber((await pool.methods.balanceOf(account).call()).toString()):BigNumber(0)
+    let usersPoolBalance = account?BigNumber((await pool.methods.balanceOf(account).call()).toString()):BigNumber(0)
 
-    const usersDaiBalance = account?BigNumber((await dai.methods.balanceOf(account).call()).toString()):BigNumber(0)
+    let usersDaiBalance = account?BigNumber((await dai.methods.balanceOf(account).call()).toString()):BigNumber(0)
 
-    const totalPoolBalance = (BigNumber((await cDai.methods.balanceOfUnderlying(pool.options.address).call()).toString()) / 10 ** 18).toFixed(6)
-    const excessPoolBalance = (BigNumber((await pool.methods.excessDepositTokens().call()).toString()) / 10 ** 18).toFixed(6)
-    const poolDepositBalance = (BigNumber((await pool.methods.totalSupply().call()).toString()) / 10 ** 18).toFixed(6)
-    const isHuman = account?await registry.methods.isHuman(account).call():false
+    let totalPoolBalance = (BigNumber((await cDai.methods.balanceOfUnderlying(pool.options.address).call()).toString()) / 10 ** 18).toFixed(6)
+    let excessPoolBalance = (BigNumber((await pool.methods.excessDepositTokens().call()).toString()) / 10 ** 18).toFixed(6)
+    let poolDepositBalance = (BigNumber((await pool.methods.totalSupply().call()).toString()) / 10 ** 18).toFixed(6)
+    let isHuman = account?await registry.methods.isHuman(account).call():false
 
-    const allowance = account?BigNumber((await dai.methods.allowance(account, pool.options.address).call()).toString()):BigNumber(0)
+    let allowance = account?BigNumber((await dai.methods.allowance(account, pool.options.address).call()).toString()):BigNumber(0)
+
+
     // Update state with the result.
     this.setState({ allowance, claimableUbiBalance, usersPoolBalance, usersDaiBalance, totalPoolBalance, excessPoolBalance, poolDepositBalance, isHuman});
   };
@@ -144,7 +147,7 @@ class App extends Component {
       if(allowance.lt(inputValue)){
         promises.push(dai.methods.approve(pool.options.address, BigNumber("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").toFixed()).send({from: account, gasPrice: await this.getGasPrice()}))
       }
-      promises.push(pool.methods.deposit(inputValue.toString()).send({from: account, gasPrice: await this.getGasPrice()}))
+      promises.push(pool.methods.deposit(inputValue.toString()).send({from: account, gas: promises.length>0? "300000": undefined, gasPrice: await this.getGasPrice()}))
       await Promise.all(promises)
     } catch{}
     await this.updateBalances()
@@ -161,7 +164,7 @@ class App extends Component {
       if(allowance.lt(inputValue)){
         promises.push(dai.methods.approve(pool.options.address, BigNumber("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").toFixed()).send({from: account, gasPrice: await this.getGasPrice()}))
       }
-      promises.push(pool.methods.donate(inputValue.toString()).send({from: account, gasPrice: await this.getGasPrice()}))
+      promises.push(pool.methods.donate(inputValue.toString()).send({from: account, gas: promises.length>0? "300000": undefined, gasPrice: await this.getGasPrice()}))
       await Promise.all(promises)
     } catch{}
     await this.updateBalances()
@@ -178,7 +181,7 @@ class App extends Component {
           <div className='row' style={{ 'borderBottom': '1px solid rgb(235, 239, 245)'}}>
             <div className='col-6 p-3 d-flex justify-content-start'>
               <img src={humanityIcon} alt='' style={{ width: '25px', height: '25px'}}/>
-              <p id='humanity-title'>Compound Interest Funded UBI</p>
+              <p id='humanity-title'>Compound Interest Funded UBI </p>   <p style={{marginLeft: '10px', marginTop: '5px', fontSize: '12px'}}> - Warning: Unaudited contracts ahead!</p>
             </div>
             <div className='col-6 p-3 d-flex justify-content-end'>
             <a id='learn-apply' href='http://humanitydao.org/'>
@@ -191,12 +194,12 @@ class App extends Component {
             <div className='col-12 my-auto'>
               <div className='row'>
                 <div className='col-4' style={{ 'border': '1px solid rgb(235, 239, 245)', 'padding': '10px'}}>
-                    <p style={{color: 'rgb(112, 112, 112)'}}>Available to claim</p>
-                    <p style={{'fontSize': '70px', 'marginTop': '50px', 'marginBottom': '50px'}}>
+                    <p style={{color: 'rgb(112, 112, 112)'}} >Available to claim</p>
+                    <p style={{'fontSize': '70px', 'marginTop': '50px', 'marginBottom': '50px'}} title="The amount currently available for you to claim">
                       <img src={daiIcon} alt='' style={{ width: '80px', height: '70px'}}/>
                       {this.state.claimableUbiBalance.toString().substring(0,8)}
                     </p>
-                    <button style={{fontSize: '25px'}} onClick={this.claim} className="sc-htpNat lnMvqK" disabled={!this.state.isHuman || this.state.isClaiming}>
+                    <button style={{fontSize: '20px'}} onClick={this.claim} className="sc-htpNat lnMvqK" disabled={!this.state.isHuman || this.state.isClaiming}>
                       {this.state.isHuman ? this.state.isClaiming?"CLAIMING":"CLAIM" : "NOT HUMAN"}
                     </button>
                 </div>
@@ -210,24 +213,24 @@ class App extends Component {
                     <div className='col-12' >
                       <div className='row' style={{'fontSize': '30px'}}>
                         <div className='col-6'>
-                          <div className='row'>
-                            <img src={daiIcon} alt='' style={{ width: '25px', height: '25px', marginTop: '10px'}}/> <p>Claimable</p>
+                          <div className='row' title="The interest earned by the pool which is claimable by verified humans">
+                            <img src={daiIcon} alt='' style={{ width: '25px', height: '25px', marginTop: '10px' }}/> <p>Claimable</p>
                           </div>
-                          <div className='row' style={{marginTop:'40px'}}>
+                          <div className='row' style={{marginTop:'40px' }} title="Deposited dai currently earning interest">
                             <img src={daiIcon} alt='' style={{ width: '25px', height: '25px', marginTop: '10px'}}/> <p>Deposits</p> 
                           </div>
-                          <div className='row' style={{marginTop:'40px'}}>
+                          <div className='row' style={{marginTop:'40px'}} title="Total pool size that is earning interest">
                             <img src={daiIcon} alt='' style={{ width: '25px', height: '25px', marginTop: '10px'}}/> <p>Total</p> 
                           </div>
                         </div>
                         <div className='col-6'>
-                          <div className='row justify-content-end'>
+                          <div className='row justify-content-end' title="The interest earned by the pool which is claimable by verified humans">
                             <p>{this.state.excessPoolBalance}</p>
                           </div>
-                          <div className='row justify-content-end' style={{marginTop:'40px'}}>
+                          <div className='row justify-content-end' style={{marginTop:'40px'}} title="Deposited dai currently earning interest">
                             <p>{this.state.poolDepositBalance}</p> 
                           </div>
-                          <div className='row justify-content-end' style={{marginTop:'40px'}}>
+                          <div className='row justify-content-end' style={{marginTop:'40px'}}  title="Total pool size that is earning interest">
                             <p>{this.state.totalPoolBalance}</p> 
                           </div>
                         </div>
@@ -259,27 +262,27 @@ class App extends Component {
                             <div className='row' style={{marginTop: '25px'}}>
                               <div className='col-12'>
                                 <div className="form-group">
-                                  <label htmlFor="amount">Amount</label>
+                                  <label htmlFor="amount" style={{marginBottom: '0px'}}>Amount</label>
                                   <input step="any" value={this.state.inputValue.div(BigNumber(10).pow(18)).toFixed()} type="number" className="form-control" id="amount"  onChange={this.updateValue}/>
                                 </div>
                               </div>
 
                             </div>
-                            <div className='row' style={{marginTop: '25px'}}>
+                            <div className='row' style={{marginTop: '40px'}}>
                               <div className='col-4'>
-                                <button style={{width: '100%', fontSize: '15px', padding: '2px'}} onClick={this.withdraw} className="sc-htpNat lnMvqK" disabled={this.state.isWithdrawing || this.state.isDepositing || this.state.isDonating || this.state.inputValue.toString() === "0" || this.state.usersPoolBalance.lt(this.state.inputValue)}>
+                                <button title="Withdraw your pooled DAI" style={{width: '100%', fontSize: '15px', padding: '2px'}} onClick={this.withdraw} className="sc-htpNat lnMvqK" disabled={this.state.isWithdrawing || this.state.isDepositing || this.state.isDonating || this.state.inputValue.toString() === "0" || this.state.usersPoolBalance.lt(this.state.inputValue)}>
                                   {this.state.isWithdrawing?"WITHDRAWING":"WITHDRAW" }
                                 </button>
 
                               </div>
                               <div className='col-4'>
-                                <button style={{width: '100%', fontSize: '15px', padding: '2px'}} onClick={this.deposit} className="sc-htpNat lnMvqK" disabled={this.state.isWithdrawing || this.state.isDepositing || this.state.isDonating || this.state.inputValue.toString() === "0" || this.state.usersDaiBalance.lt(this.state.inputValue)}>
+                                <button title="Deposit DAI to the pool, you can always withdraw this later" style={{width: '100%', fontSize: '15px', padding: '2px'}} onClick={this.deposit} className="sc-htpNat lnMvqK" disabled={this.state.isWithdrawing || this.state.isDepositing || this.state.isDonating || this.state.inputValue.toString() === "0" || this.state.usersDaiBalance.lt(this.state.inputValue)}>
                                   {this.state.isDepositing?"DEPOSITING":"DEPOSIT"}
                                 </button>
 
                               </div>
                               <div className='col-4'>
-                                <button style={{width: '100%', fontSize: '15px', padding: '2px'}} onClick={this.donate} className="sc-htpNat lnMvqK" disabled={this.state.isWithdrawing || this.state.isDepositing || this.state.isDonating || this.state.inputValue.toString() === "0" || this.state.usersDaiBalance.lt(this.state.inputValue)}>
+                                <button title='Donate DAI to the pool, this is added to the "Claimable" balance and you can&apos;t withdraw it' style={{width: '100%', fontSize: '15px', padding: '2px'}} onClick={this.donate} className="sc-htpNat lnMvqK" disabled={this.state.isWithdrawing || this.state.isDepositing || this.state.isDonating || this.state.inputValue.toString() === "0" || this.state.usersDaiBalance.lt(this.state.inputValue)}>
                                   {this.state.isDonating?"DONATING":"DONATE"}
                                 </button>
 
